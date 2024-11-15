@@ -29,8 +29,10 @@ class Funcion:
     
     def taylor(self, punto, grado):
         x, y = punto.keys()
-        if(grado == 2):
+        if(grado == 1):
             return self.planoTangente(punto, x, y)
+        elif grado == 0:
+            return self.f[0].subs(punto)
         else:
             taylor = self.f[0].subs(punto)
             for i in range(1, grado + 1):
@@ -82,6 +84,12 @@ ejemplos = [
         'punto': {x: 0, y: 0},
         'z0' : 10,
         'limX' : 10,
+    },
+    {
+        'f': [sp.E**x * sp.cos(x+y)],
+        'punto': {x: 0, y: 0},
+        'z0' : 5,
+        'limX' : 3,
     }
 ]
 
@@ -158,7 +166,7 @@ combo_ejemplo.grid(column=1, row=0, sticky=(tk.W, tk.E))
 combo_ejemplo.current(0)
 
 ttk.Label(frame, text="Grado:").grid(column=0, row=1, sticky=tk.W) #Seleccion de grado
-combo_grado = ttk.Combobox(frame, values=list(range(2, 11)))
+combo_grado = ttk.Combobox(frame, values=list(range(1, 11)))
 combo_grado.grid(column=1, row=1, sticky=(tk.W, tk.E))
 combo_grado.current(0)
 
@@ -168,26 +176,6 @@ ttk.Button(frame, text="Graficar", command=plot_graph).grid(column=0, row=2, col
 ttk.Label(frame, text="X:").grid(column=3, row=0, sticky=tk.W) #Entrada de punto x
 entry_punto_x = ttk.Entry(frame)
 entry_punto_x.grid(column=4, row=0, sticky=(tk.W, tk.E))
-
-# Función para actualizar las entradas
-def update_entries():
-    ejemploN = int(combo_ejemplo.current())
-    entry_punto_x.delete(0, tk.END)
-    entry_punto_x.insert(0, str(ejemplos[ejemploN]['punto'][x]))
-    entry_punto_y.delete(0, tk.END)
-    entry_punto_y.insert(0, str(ejemplos[ejemploN]['punto'][y]))
-    entry_punto_z.delete(0, tk.END)
-    entry_punto_z.insert(0, str(ejemplos[ejemploN]['z0']))
-    entry_limite_x.delete(0, tk.END)
-    entry_limite_x.insert(0, str(ejemplos[ejemploN]['limX']))
-    entry_limite_y.delete(0, tk.END)
-    entry_limite_y.insert(0, str(ejemplos[ejemploN]['limX']))
-
-# Actualizar las entradas cuando se selecciona un ejemplo
-combo_ejemplo.bind("<<ComboboxSelected>>", lambda event: update_entries())
-
-# Actualizar las entradas con los valores iniciales
-entry_punto_x.insert(0, str(ejemplos[0]['punto'][x]))
 
 ttk.Label(frame, text="Y:").grid(column=3, row=1, sticky=tk.W) #Entrada de punto y
 entry_punto_y = ttk.Entry(frame)
@@ -229,6 +217,26 @@ label_taylor_text.config(state=tk.NORMAL)
 label_taylor_text.config(state=tk.DISABLED)
 
 scrollbar_x.config(command=label_taylor_text.xview)
+
+# Función para actualizar las entradas
+def update_entries():
+    ejemploN = int(combo_ejemplo.current())
+    entry_punto_x.delete(0, tk.END)
+    entry_punto_x.insert(0, str(ejemplos[ejemploN]['punto'][x]))
+    entry_punto_y.delete(0, tk.END)
+    entry_punto_y.insert(0, str(ejemplos[ejemploN]['punto'][y]))
+    entry_punto_z.delete(0, tk.END)
+    entry_punto_z.insert(0, str(ejemplos[ejemploN]['z0']))
+    entry_limite_x.delete(0, tk.END)
+    entry_limite_x.insert(0, str(ejemplos[ejemploN]['limX']))
+    entry_limite_y.delete(0, tk.END)
+    entry_limite_y.insert(0, str(ejemplos[ejemploN]['limX']))
+
+# Actualizar las entradas cuando se selecciona un ejemplo
+combo_ejemplo.bind("<<ComboboxSelected>>", lambda event: update_entries())
+
+# Actualizar las entradas con los valores iniciales
+entry_punto_x.insert(0, str(ejemplos[0]['punto'][x]))
 
 # Crear la figura y los ejes 3D
 fig = plt.figure(figsize=(8, 4))
